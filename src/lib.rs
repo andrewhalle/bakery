@@ -71,7 +71,7 @@ impl Parcel {
         };
         let bulk_price = sale_bulk_pricing.or(self.item.bulk_pricing.as_ref());
         if let Some(bulk_pricing) = bulk_price {
-            let number_of_groups = self.count / bulk_pricing.amount;
+            let number_of_groups = count / bulk_pricing.amount;
             count -= number_of_groups * bulk_pricing.amount;
             total += (number_of_groups as f64) * bulk_pricing.total_price;
         }
@@ -261,5 +261,25 @@ mod tests {
         .into_iter()
         .collect();
         assert_eq!(cart.price(&sales), 30.0);
+    }
+
+    #[test]
+    fn n_for_one_sale() {
+        let cart = Cart {
+            parcels: vec![Parcel {
+                item: Item {
+                    id: 1,
+                    _name: String::from("cookies"),
+                    price: 1.25,
+                    bulk_pricing: Some(BulkPrice {
+                        amount: 6,
+                        total_price: 6.0,
+                    }),
+                },
+                count: 12,
+            }],
+        };
+        let sales: HashMap<u64, Sale> = [(1, Sale::NForOne(2))].into_iter().collect();
+        assert_eq!(cart.price(&sales), 6.0);
     }
 }
