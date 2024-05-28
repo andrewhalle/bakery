@@ -70,6 +70,101 @@ mod tests {
     }
 
     #[test]
+    fn multi_item_one() {
+        let cart = Cart {
+            parcels: vec![
+                Parcel {
+                    item: Item {
+                        _id: 1,
+                        _name: String::from("cookies"),
+                        price: 1.25,
+                        bulk_pricing: Some(BulkPrice {
+                            amount: 6,
+                            total_price: 6.0,
+                        }),
+                    },
+                    count: 1,
+                },
+                Parcel {
+                    item: Item {
+                        _id: 2,
+                        _name: String::from("Brownies"),
+                        price: 2.0,
+                        bulk_pricing: Some(BulkPrice {
+                            amount: 4,
+                            total_price: 7.0,
+                        }),
+                    },
+                    count: 4,
+                },
+                Parcel {
+                    item: Item {
+                        _id: 3,
+                        _name: String::from("Cheesecake"),
+                        price: 8.0,
+                        bulk_pricing: None,
+                    },
+                    count: 1,
+                },
+            ],
+        };
+
+        assert_eq!(cart.price(), 16.25);
+    }
+
+    #[test]
+    fn multi_item_two() {
+        let cart = Cart {
+            parcels: vec![
+                Parcel {
+                    item: Item {
+                        _id: 1,
+                        _name: String::from("cookies"),
+                        price: 1.25,
+                        bulk_pricing: Some(BulkPrice {
+                            amount: 6,
+                            total_price: 6.0,
+                        }),
+                    },
+                    count: 1,
+                },
+                Parcel {
+                    item: Item {
+                        _id: 2,
+                        _name: String::from("Brownies"),
+                        price: 2.0,
+                        bulk_pricing: Some(BulkPrice {
+                            amount: 4,
+                            total_price: 7.0,
+                        }),
+                    },
+                    count: 1,
+                },
+                Parcel {
+                    item: Item {
+                        _id: 3,
+                        _name: String::from("Cheesecake"),
+                        price: 8.0,
+                        bulk_pricing: None,
+                    },
+                    count: 1,
+                },
+                Parcel {
+                    item: Item {
+                        _id: 4,
+                        _name: String::from("Donuts"),
+                        price: 0.5,
+                        bulk_pricing: None,
+                    },
+                    count: 2,
+                },
+            ],
+        };
+
+        assert_eq!(cart.price(), 12.25);
+    }
+
+    #[test]
     fn eight_cookies() {
         let cart = Cart {
             parcels: vec![Parcel {
