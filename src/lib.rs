@@ -68,4 +68,23 @@ mod tests {
         };
         assert_eq!(cart.price(), 7.25);
     }
+
+    #[test]
+    fn eight_cookies() {
+        let cart = Cart {
+            parcels: vec![Parcel {
+                count: 8,
+                item: Item {
+                    _id: 1,
+                    _name: String::from("cookies"),
+                    price: 1.25,
+                    bulk_pricing: Some(BulkPrice {
+                        amount: 6,
+                        total_price: 6.0,
+                    }),
+                },
+            }],
+        };
+        assert_eq!(cart.price(), 8.50);
+    }
 }
