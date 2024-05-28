@@ -4,12 +4,14 @@ use serde::{Deserialize, Serialize};
 
 /// A collection of items that is priced together.
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Cart {
     parcels: Vec<Parcel>,
 }
 
 /// A `Parcel` is a number of items grouped together. (ex. "8 cookies")
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Parcel {
     item: Item,
     count: u32,
@@ -17,15 +19,17 @@ pub struct Parcel {
 
 /// A good with a price.
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Item {
     id: u64,
-    _name: String,
+    name: String,
     // TODO: Not money as float.
     price: f64,
     bulk_pricing: Option<BulkPrice>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BulkPrice {
     amount: u32,
     // TODO: Not money as float.
@@ -34,6 +38,7 @@ pub struct BulkPrice {
 
 /// A change that can be applied to the price of a parcel.
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Sale {
     /// Replace the bulk price (if there is one) for the parcel's item.
     Bulk(BulkPrice),
