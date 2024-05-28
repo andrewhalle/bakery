@@ -37,7 +37,7 @@ pub struct BulkPrice {
 }
 
 /// A change that can be applied to the price of a parcel.
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Sale {
     /// Replace the bulk price (if there is one) for the parcel's item.

@@ -10,7 +10,7 @@ use axum::{
     Json, Router,
 };
 use bakery_test::Parcel;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Datelike as _, Utc};
 use serde::{Deserialize, Serialize};
 
 async fn create_cart(
@@ -25,7 +25,7 @@ async fn create_cart(
 
 async fn get_cart_price(
     Path(id): Path<u64>,
-    Query(_query): Query<DateQuery>,
+    Query(DateQuery { date }): Query<DateQuery>,
     State(state): State<Arc<Mutex<AppState>>>,
 ) -> Json<Price> {
     let state = state.lock().unwrap();
@@ -52,8 +52,14 @@ async fn get_cart_price(
         )
         .collect();
     let cart = bakery_test::Cart { parcels };
+    let sales: HashMap<u64, bakery_test::Sale> = state
+        .sales
+        .iter()
+        .filter(|sale| sale.applies(date))
+        .map(|sale| (sale.item_id, sale.sale.clone()))
+        .collect();
     Json(Price {
-        price: cart.price(&HashMap::new()),
+        price: cart.price(&sales),
     })
 }
 
@@ -90,15 +96,27 @@ struct ItemIdAndAmount {
 #[serde(rename_all = "camelCase")]
 enum Applies {
     Day(chrono::Weekday),
-    Date(chrono::Month, u16),
+    Date(chrono::Month, u32),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Sale {
     id: u64,
+    item_id: u64,
     filter: Applies,
     sale: bakery_test::Sale,
+}
+
+impl Sale {
+    fn applies(&self, date: DateTime<Utc>) -> bool {
+        match &self.filter {
+            Applies::Day(day) => date.weekday() == *day,
+            Applies::Date(month, day) => {
+                date.month() == month.number_from_month() && date.day() == *day
+            }
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
