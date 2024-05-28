@@ -1,20 +1,22 @@
 use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
+
 /// A collection of items that is priced together.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Cart {
     parcels: Vec<Parcel>,
 }
 
 /// A `Parcel` is a number of items grouped together. (ex. "8 cookies")
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Parcel {
     item: Item,
     count: u32,
 }
 
 /// A good with a price.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Item {
     id: u64,
     _name: String,
@@ -23,7 +25,7 @@ pub struct Item {
     bulk_pricing: Option<BulkPrice>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BulkPrice {
     amount: u32,
     // TODO: Not money as float.
@@ -31,7 +33,7 @@ pub struct BulkPrice {
 }
 
 /// A change that can be applied to the price of a parcel.
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Sale {
     /// Replace the bulk price (if there is one) for the parcel's item.
     Bulk(BulkPrice),
