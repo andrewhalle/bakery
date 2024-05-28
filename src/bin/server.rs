@@ -1,25 +1,82 @@
 use std::{
+    collections::HashMap,
     env, fs,
     sync::{Arc, Mutex},
 };
 
 use axum::{
-    extract::State,
+    extract::{Path, Query, State},
     routing::{get, post},
-    Router,
+    Json, Router,
 };
+use bakery_test::Parcel;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-async fn create_cart(State(state): State<Arc<Mutex<AppState>>>) {
-    let _guard = dbg!(state.lock().unwrap());
+async fn create_cart(
+    State(state): State<Arc<Mutex<AppState>>>,
+    Json(cart): Json<Cart>,
+) -> Json<CreatedCart> {
+    let mut state = state.lock().unwrap();
+    state.carts.push(cart);
+    let cart_id = state.carts.len() as u64;
+    Json(CreatedCart { cart_id })
 }
 
-async fn get_cart_price() {}
+async fn get_cart_price(
+    Path(id): Path<u64>,
+    Query(_query): Query<DateQuery>,
+    State(state): State<Arc<Mutex<AppState>>>,
+) -> Json<Price> {
+    let state = state.lock().unwrap();
+    let cart = &state.carts[(id - 1) as usize];
+    let parcels: Vec<bakery_test::Parcel> = cart
+        .items
+        .iter()
+        .map(
+            |ItemIdAndAmount {
+                 item_id,
+                 amount: count,
+             }| {
+                let item = state
+                    .treats
+                    .iter()
+                    .find(|&treat| treat.id == *item_id)
+                    .unwrap()
+                    .clone();
+                Parcel {
+                    item,
+                    count: *count,
+                }
+            },
+        )
+        .collect();
+    let cart = bakery_test::Cart { parcels };
+    Json(Price {
+        price: cart.price(&HashMap::new()),
+    })
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Price {
+    price: f64,
+}
+
+#[derive(Debug, Deserialize)]
+struct DateQuery {
+    date: DateTime<Utc>,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Cart {
     items: Vec<ItemIdAndAmount>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct CreatedCart {
+    cart_id: u64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

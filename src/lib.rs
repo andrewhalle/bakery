@@ -6,29 +6,29 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Cart {
-    parcels: Vec<Parcel>,
+    pub parcels: Vec<Parcel>,
 }
 
 /// A `Parcel` is a number of items grouped together. (ex. "8 cookies")
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Parcel {
-    item: Item,
-    count: u32,
+    pub item: Item,
+    pub count: u32,
 }
 
 /// A good with a price.
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Item {
-    id: u64,
+    pub id: u64,
     name: String,
     // TODO: Not money as float.
     price: f64,
     bulk_pricing: Option<BulkPrice>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BulkPrice {
     amount: u32,
@@ -102,7 +102,7 @@ mod tests {
                 count: 7,
                 item: Item {
                     id: 1,
-                    _name: String::from("cookies"),
+                    name: String::from("cookies"),
                     price: 1.25,
                     bulk_pricing: Some(BulkPrice {
                         amount: 6,
@@ -121,7 +121,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 1,
-                        _name: String::from("cookies"),
+                        name: String::from("cookies"),
                         price: 1.25,
                         bulk_pricing: Some(BulkPrice {
                             amount: 6,
@@ -133,7 +133,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 2,
-                        _name: String::from("Brownies"),
+                        name: String::from("Brownies"),
                         price: 2.0,
                         bulk_pricing: Some(BulkPrice {
                             amount: 4,
@@ -145,7 +145,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 3,
-                        _name: String::from("Cheesecake"),
+                        name: String::from("Cheesecake"),
                         price: 8.0,
                         bulk_pricing: None,
                     },
@@ -164,7 +164,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 1,
-                        _name: String::from("cookies"),
+                        name: String::from("cookies"),
                         price: 1.25,
                         bulk_pricing: Some(BulkPrice {
                             amount: 6,
@@ -176,7 +176,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 2,
-                        _name: String::from("Brownies"),
+                        name: String::from("Brownies"),
                         price: 2.0,
                         bulk_pricing: Some(BulkPrice {
                             amount: 4,
@@ -188,7 +188,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 3,
-                        _name: String::from("Cheesecake"),
+                        name: String::from("Cheesecake"),
                         price: 8.0,
                         bulk_pricing: None,
                     },
@@ -197,7 +197,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 4,
-                        _name: String::from("Donuts"),
+                        name: String::from("Donuts"),
                         price: 0.5,
                         bulk_pricing: None,
                     },
@@ -216,7 +216,7 @@ mod tests {
                 count: 8,
                 item: Item {
                     id: 1,
-                    _name: String::from("cookies"),
+                    name: String::from("cookies"),
                     price: 1.25,
                     bulk_pricing: Some(BulkPrice {
                         amount: 6,
@@ -235,7 +235,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 1,
-                        _name: String::from("cookies"),
+                        name: String::from("cookies"),
                         price: 1.25,
                         bulk_pricing: Some(BulkPrice {
                             amount: 6,
@@ -247,7 +247,7 @@ mod tests {
                 Parcel {
                     item: Item {
                         id: 2,
-                        _name: String::from("Cheesecakes"),
+                        name: String::from("Cheesecakes"),
                         price: 8.0,
                         bulk_pricing: None,
                     },
@@ -276,7 +276,7 @@ mod tests {
             parcels: vec![Parcel {
                 item: Item {
                     id: 1,
-                    _name: String::from("cookies"),
+                    name: String::from("cookies"),
                     price: 1.25,
                     bulk_pricing: Some(BulkPrice {
                         amount: 6,
